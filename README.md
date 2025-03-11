@@ -1,7 +1,6 @@
 🧑‍💻 Projeto de Desafios em Dart
 
 Este projeto é uma coleção de desafios e miniaplicativos desenvolvidos em Dart, com o objetivo de praticar lógica de programação, interação com APIs, manipulação de dados e conceitos fundamentais de programação. Ele foi criado no contexto das atividades da turma ZETA, da instituição iCEV.
-👨‍🏫 Instituição
 
 iCEV - Instituto de Ensino Superior
 👨‍👩‍👦‍👦 Alunos
