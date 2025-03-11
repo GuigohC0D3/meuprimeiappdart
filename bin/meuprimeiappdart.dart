@@ -6,7 +6,7 @@ import 'dart:convert';
 
 void main() {
   while (true) {
-    print('\nEscolha um desafio para executar:');
+    print('\n===== MENU DE DESAFIOS =====');
     print('1 - Simulador de Conta Bancária');
     print('2 - Relógio Digital');
     print('3 - Pedra, Papel e Tesoura');
@@ -14,11 +14,11 @@ void main() {
     print('5 - Gerenciamento de Estado (Carrinho de Compras)');
     print('6 - Jogo de Adivinhação');
     print('7 - Simulador de Sorteio');
-    print('8 - Conversor de Moedas');
-    print('9 - Gerador de Senhas');
-    print('10 - Calculadora IMC');
-    print('11 - Sair');
-    stdout.write('Opção: ');
+    print('8 - Calculadora de IMC');
+    print('9 - Conversão de Moeda');
+    print('10 - Gerador de Senha');
+    print('0 - Sair');
+    stdout.write('Escolha uma opção: ');
     String? opcao = stdin.readLineSync();
 
     if (opcao == null) {
@@ -49,17 +49,17 @@ void main() {
         simuladorSorteio();
         break;
       case '8':
-        conversorMoedas();
-        break;
-      case '9':
-        geradorSenhas();
-        break;
-      case '10':
         calculadoraIMC();
         break;
-      case '11':
+      case '9':
+        conversaoMoeda();
+        break;
+      case '10':
+        geradorSenha();
+        break;
+      case '0':
         print('Saindo...');
-        return;
+        exit(0);
       default:
         print('Opção inválida!');
     }
@@ -75,20 +75,20 @@ class ContaBancaria {
 
   void depositar(double valor) {
     saldo += valor;
-    print('Depósito de R\$ $valor realizado. Saldo atual: R\$ $saldo');
+    print('Depósito de R\$ ${valor.toStringAsFixed(2)} realizado. Saldo atual: R\$ ${saldo.toStringAsFixed(2)}');
   }
 
   void sacar(double valor) {
     if (valor <= saldo) {
       saldo -= valor;
-      print('Saque de R\$ $valor realizado. Saldo atual: R\$ $saldo');
+      print('Saque de R\$ ${valor.toStringAsFixed(2)} realizado. Saldo atual: R\$ ${saldo.toStringAsFixed(2)}');
     } else {
       print('Saldo insuficiente! Operação cancelada.');
     }
   }
 
   void consultarSaldo() {
-    print('Saldo atual de $titular: R\$ $saldo');
+    print('Saldo atual de $titular: R\$ ${saldo.toStringAsFixed(2)}');
   }
 }
 
@@ -96,51 +96,38 @@ void simuladorContaBancaria() {
   print('Bem-vindo ao Simulador de Conta Bancária!');
   stdout.write('Digite o nome do titular da conta: ');
   String? titular = stdin.readLineSync();
+
   if (titular == null || titular.isEmpty) {
     print('Nome do titular inválido!');
     return;
   }
+
   ContaBancaria conta = ContaBancaria(titular, 0.0);
 
   while (true) {
     print('\n1 - Depositar');
     print('2 - Sacar');
     print('3 - Consultar Saldo');
-    print('4 - Voltar');
-    stdout.write('Opção: ');
+    print('4 - Voltar ao menu');
+    stdout.write('Escolha uma opção: ');
     String? opcao = stdin.readLineSync();
-
-    if (opcao == null) {
-      print('Erro ao ler a entrada!');
-      continue;
-    }
 
     if (opcao == '1') {
       stdout.write('Digite o valor do depósito: ');
-      String? input = stdin.readLineSync();
-      if (input == null || input.isEmpty) {
-        print('Entrada inválida!');
-        continue;
-      }
-      double valor = double.tryParse(input) ?? 0.0;
-      if (valor <= 0) {
+      double? valor = double.tryParse(stdin.readLineSync() ?? '');
+      if (valor != null && valor > 0) {
+        conta.depositar(valor);
+      } else {
         print('Valor inválido!');
-        continue;
       }
-      conta.depositar(valor);
     } else if (opcao == '2') {
       stdout.write('Digite o valor do saque: ');
-      String? input = stdin.readLineSync();
-      if (input == null || input.isEmpty) {
-        print('Entrada inválida!');
-        continue;
-      }
-      double valor = double.tryParse(input) ?? 0.0;
-      if (valor <= 0) {
+      double? valor = double.tryParse(stdin.readLineSync() ?? '');
+      if (valor != null && valor > 0) {
+        conta.sacar(valor);
+      } else {
         print('Valor inválido!');
-        continue;
       }
-      conta.sacar(valor);
     } else if (opcao == '3') {
       conta.consultarSaldo();
     } else if (opcao == '4') {
@@ -153,10 +140,9 @@ void simuladorContaBancaria() {
 
 // 2. Relógio Digital
 void relogioDigital() {
-  print('Relógio Digital (Pressione Ctrl+C para sair):');
+  print('Relógio Digital (Ctrl+C para sair):');
   Timer.periodic(Duration(seconds: 1), (Timer t) {
-    // Limpa o console para atualizar o relógio
-    print('\x1B[2J\x1B[0;0H'); // Código ANSI para limpar o console
+    print('\x1B[2J\x1B[0;0H'); // Limpa o terminal
     print(DateTime.now());
   });
 }
@@ -167,41 +153,30 @@ void pedraPapelTesoura() {
   final opcoes = ['Pedra', 'Papel', 'Tesoura'];
 
   while (true) {
-    print('\nEscolha uma opção:');
-    print('1 - Pedra');
-    print('2 - Papel');
-    print('3 - Tesoura');
-    print('4 - Voltar');
-    stdout.write('Opção: ');
+    print('\n1 - Pedra\n2 - Papel\n3 - Tesoura\n4 - Voltar ao menu');
+    stdout.write('Escolha sua jogada: ');
     String? opcao = stdin.readLineSync();
 
-    if (opcao == null) {
-      print('Erro ao ler a entrada!');
-      continue;
-    }
+    if (opcao == '4') return;
 
-    if (opcao == '4') {
-      return;
-    }
+    int escolhaUsuario = int.tryParse(opcao ?? '') ?? 0;
 
-    int escolhaUsuario = int.tryParse(opcao) ?? 0;
     if (escolhaUsuario < 1 || escolhaUsuario > 3) {
       print('Opção inválida!');
       continue;
     }
 
-    int escolhaComputador = random.nextInt(3) + 1;
-    print('\nVocê escolheu: ${opcoes[escolhaUsuario - 1]}');
-    print('Computador escolheu: ${opcoes[escolhaComputador - 1]}');
+    int escolhaComputador = random.nextInt(3);
+    print('Você: ${opcoes[escolhaUsuario - 1]} | Computador: ${opcoes[escolhaComputador]}');
 
-    if (escolhaUsuario == escolhaComputador) {
+    if (escolhaUsuario - 1 == escolhaComputador) {
       print('Empate!');
-    } else if ((escolhaUsuario == 1 && escolhaComputador == 3) ||
-        (escolhaUsuario == 2 && escolhaComputador == 1) ||
-        (escolhaUsuario == 3 && escolhaComputador == 2)) {
-      print('Você venceu!');
-    } else {
+    } else if ((escolhaUsuario == 1 && escolhaComputador == 2) ||
+        (escolhaUsuario == 2 && escolhaComputador == 3) ||
+        (escolhaUsuario == 3 && escolhaComputador == 1)) {
       print('Você perdeu!');
+    } else {
+      print('Você venceu!');
     }
   }
 }
@@ -210,16 +185,20 @@ void pedraPapelTesoura() {
 void consumirAPI() async {
   print('Consumindo API Pública...');
   final url = Uri.parse('https://jsonplaceholder.typicode.com/posts');
-  final response = await http.get(url);
+  try {
+    final response = await http.get(url);
 
-  if (response.statusCode == 200) {
-    List<dynamic> posts = jsonDecode(response.body);
-    print('\nÚltimos 5 posts:');
-    for (var i = 0; i < 5; i++) {
-      print('Post ${i + 1}: ${posts[i]['title']}');
+    if (response.statusCode == 200) {
+      List<dynamic> posts = jsonDecode(response.body);
+      print('\nÚltimos 5 posts:');
+      for (var i = 0; i < 5; i++) {
+        print('${i + 1} - ${posts[i]['title']}');
+      }
+    } else {
+      print('Erro ao carregar os posts. Código: ${response.statusCode}');
     }
-  } else {
-    print('Erro ao carregar os posts.');
+  } catch (e) {
+    print('Erro de conexão: $e');
   }
 }
 
@@ -229,26 +208,22 @@ class CarrinhoDeCompras {
 
   void adicionarItem(String item) {
     itens.add(item);
-    print('Item "$item" adicionado ao carrinho.');
+    print('Item "$item" adicionado.');
   }
 
   void removerItem(String item) {
-    if (itens.contains(item)) {
-      itens.remove(item);
-      print('Item "$item" removido do carrinho.');
+    if (itens.remove(item)) {
+      print('Item "$item" removido.');
     } else {
-      print('Item "$item" não encontrado no carrinho.');
+      print('Item "$item" não encontrado.');
     }
   }
 
   void listarItens() {
     if (itens.isEmpty) {
-      print('O carrinho está vazio.');
+      print('Carrinho vazio.');
     } else {
-      print('Itens no carrinho:');
-      for (var item in itens) {
-        print('- $item');
-      }
+      print('Itens no carrinho: ${itens.join(", ")}');
     }
   }
 }
@@ -257,75 +232,51 @@ void gerenciarCarrinho() {
   CarrinhoDeCompras carrinho = CarrinhoDeCompras();
 
   while (true) {
-    print('\n1 - Adicionar item');
-    print('2 - Remover item');
-    print('3 - Listar itens');
-    print('4 - Voltar');
-    stdout.write('Opção: ');
+    print('\n1 - Adicionar item\n2 - Remover item\n3 - Listar itens\n4 - Voltar ao menu');
+    stdout.write('Escolha: ');
     String? opcao = stdin.readLineSync();
 
-    if (opcao == null) {
-      print('Erro ao ler a entrada!');
-      continue;
-    }
-
     if (opcao == '1') {
-      stdout.write('Digite o nome do item: ');
+      stdout.write('Nome do item: ');
       String? item = stdin.readLineSync();
-      if (item == null || item.isEmpty) {
-        print('Nome do item inválido!');
-        continue;
-      }
-      carrinho.adicionarItem(item);
+      if (item != null && item.isNotEmpty) carrinho.adicionarItem(item);
     } else if (opcao == '2') {
-      stdout.write('Digite o nome do item: ');
+      stdout.write('Nome do item: ');
       String? item = stdin.readLineSync();
-      if (item == null || item.isEmpty) {
-        print('Nome do item inválido!');
-        continue;
-      }
-      carrinho.removerItem(item);
+      if (item != null && item.isNotEmpty) carrinho.removerItem(item);
     } else if (opcao == '3') {
       carrinho.listarItens();
     } else if (opcao == '4') {
       return;
     } else {
-      print('Opção inválida!');
+      print('Opção inválida.');
     }
   }
 }
 
 // 6. Jogo de Adivinhação
 void jogoAdivinhacao() {
-  var numeroSecreto = Random().nextInt(100) + 1;
-  var acertou = false;
+  int numeroSecreto = Random().nextInt(100) + 1;
+  bool acertou = false;
 
-  print('Bem-vindo ao Jogo de Adivinhação!');
-  print('Adivinhe o número secreto entre 1 e 100.');
+  print('Jogo de Adivinhação (1-100)');
 
   while (!acertou) {
-    stdout.write('Digite um número: ');
-    var entrada = stdin.readLineSync();
-
-    if (entrada == null) {
-      print('Por favor, insira um número válido.');
-      continue;
-    }
-
-    var palpite = int.tryParse(entrada);
+    stdout.write('Digite seu palpite: ');
+    int? palpite = int.tryParse(stdin.readLineSync() ?? '');
 
     if (palpite == null) {
-      print('Por favor, insira um número válido.');
+      print('Entrada inválida!');
       continue;
     }
 
     if (palpite == numeroSecreto) {
-      print('Parabéns! Você acertou o número secreto!');
+      print('Acertou!');
       acertou = true;
     } else if (palpite < numeroSecreto) {
-      print('O número secreto é maior. Tente novamente.');
+      print('É maior!');
     } else {
-      print('O número secreto é menor. Tente novamente.');
+      print('É menor!');
     }
   }
 }
@@ -334,134 +285,83 @@ void jogoAdivinhacao() {
 void simuladorSorteio() {
   List<String> nomes = [];
 
-  print('Bem-vindo ao Simulador de Sorteio!');
-  print('Digite os nomes para o sorteio (digite "sair" para finalizar):');
-
+  print('Digite nomes para o sorteio ("sair" para finalizar):');
   while (true) {
-    stdout.write('Digite um nome: ');
-    var entrada = stdin.readLineSync();
+    stdout.write('Nome: ');
+    String? entrada = stdin.readLineSync();
 
-    if (entrada == null || entrada.toLowerCase() == 'sair') {
-      break;
-    }
-
-    if (entrada.isNotEmpty) {
-      nomes.add(entrada);
-    } else {
-      print('O nome não pode estar vazio. Tente novamente.');
-    }
+    if (entrada == null || entrada.toLowerCase() == 'sair') break;
+    if (entrada.isNotEmpty) nomes.add(entrada);
   }
 
   if (nomes.isEmpty) {
-    print('Nenhum nome foi inserido. Sorteio não pode ser realizado.');
+    print('Nenhum participante.');
     return;
   }
 
-  var sorteado = nomes[Random().nextInt(nomes.length)];
-
-  print('\nLista de participantes: ${nomes.join(", ")}');
-  print('O nome sorteado é: $sorteado');
+  String sorteado = nomes[Random().nextInt(nomes.length)];
+  print('Participantes: ${nomes.join(", ")}');
+  print('Sorteado: $sorteado');
 }
 
-// 8. Conversor de Moedas
-void conversorMoedas() {
-  // Taxas de conversão simuladas
-  const double taxaDolar = 5.00; // 1 USD = 5.00 BRL
-  const double taxaEuro = 5.50; // 1 EUR = 5.50 BRL
+// 8. Calculadora de IMC
+void calculadoraIMC() {
+  stdout.write('Digite seu peso (kg): ');
+  double? peso = double.tryParse(stdin.readLineSync() ?? '');
+  stdout.write('Digite sua altura (m): ');
+  double? altura = double.tryParse(stdin.readLineSync() ?? '');
 
-  print('Conversor de Moedas');
-  print('--------------------');
+  if (peso == null || altura == null || peso <= 0 || altura <= 0) {
+    print('Dados inválidos.');
+    return;
+  }
+
+  double imc = peso / (altura * altura);
+  print('Seu IMC: ${imc.toStringAsFixed(2)}');
+
+  if (imc < 18.5)
+    print('Baixo peso');
+  else if (imc < 24.9)
+    print('Peso normal');
+  else if (imc < 29.9)
+    print('Sobrepeso');
+  else
+    print('Obesidade');
+}
+
+// 9. Conversão de Moeda
+void conversaoMoeda() {
+  const taxaDolar = 5.00;
+  const taxaEuro = 5.50;
 
   stdout.write('Digite o valor em Reais (BRL): ');
-  String? input = stdin.readLineSync();
+  double? reais = double.tryParse(stdin.readLineSync() ?? '');
 
-  if (input != null && input.isNotEmpty) {
-    double valorReais = double.parse(input);
-
-    double valorEmDolar = valorReais / taxaDolar;
-    double valorEmEuro = valorReais / taxaEuro;
-
-    print('\n=== Conversão ===');
-    print('R\$ ${valorReais.toStringAsFixed(2)} equivale a:');
-    print('- ${valorEmDolar.toStringAsFixed(2)} USD');
-    print('- ${valorEmEuro.toStringAsFixed(2)} EUR');
-  } else {
-    print('Valor inválido!');
+  if (reais == null || reais <= 0) {
+    print('Valor inválido.');
+    return;
   }
+
+  print('USD: ${(reais / taxaDolar).toStringAsFixed(2)}');
+  print('EUR: ${(reais / taxaEuro).toStringAsFixed(2)}');
 }
 
-// 9. Gerador de Senhas
-void geradorSenhas() {
-  stdout.write('Digite o tamanho da senha (padrão: 12): ');
-  String? input = stdin.readLineSync();
-  int tamanho =
-      input != null && input.isNotEmpty ? int.tryParse(input) ?? 12 : 12;
+// 10. Gerador de Senha
+void geradorSenha() {
+  stdout.write('Tamanho da senha: ');
+  int? tamanho = int.tryParse(stdin.readLineSync() ?? '');
+
+  if (tamanho == null || tamanho <= 0) {
+    print('Tamanho inválido.');
+    return;
+  }
 
   String senha = gerarSenha(tamanho);
-
-  print('\nSenha gerada: $senha');
+  print('Senha gerada: $senha');
 }
 
 String gerarSenha(int tamanho) {
-  const String letrasMinusculas = 'abcdefghijklmnopqrstuvwxyz';
-  const String letrasMaiusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const String numeros = '0123456789';
-  const String simbolos = '!@#\$%^&*()_+-=[]{}|;:,.<>?';
-
-  String todosCaracteres =
-      letrasMinusculas + letrasMaiusculas + numeros + simbolos;
-
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#\$%^&*()_+-=[]{}|;:,.<>?';
   Random random = Random();
-  String senha = '';
-
-  for (int i = 0; i < tamanho; i++) {
-    int index = random.nextInt(todosCaracteres.length);
-    senha += todosCaracteres[index];
-  }
-
-  return senha;
-}
-
-// 10. Calculadora IMC
-void calculadoraIMC() {
-  print('Bem-vindo à Calculadora de IMC!');
-
-  stdout.write('Por favor, insira seu peso em kg: ');
-  var pesoEntrada = stdin.readLineSync();
-  var peso = double.tryParse(pesoEntrada ?? '');
-
-  if (peso == null || peso <= 0) {
-    print(
-      'Peso inválido. Por favor, reinicie o programa e insira um valor válido.',
-    );
-    return;
-  }
-
-  stdout.write('Por favor, insira sua altura em metros (exemplo: 1.75): ');
-  var alturaEntrada = stdin.readLineSync();
-  var altura = double.tryParse(alturaEntrada ?? '');
-
-  if (altura == null || altura <= 0) {
-    print(
-      'Altura inválida. Por favor, reinicie o programa e insira um valor válido.',
-    );
-    return;
-  }
-
-  // Cálculo do IMC
-  var imc = peso / (altura * altura);
-
-  String faixa;
-  if (imc < 18.5) {
-    faixa = 'Baixo peso';
-  } else if (imc < 24.9) {
-    faixa = 'Peso normal';
-  } else if (imc < 29.9) {
-    faixa = 'Sobrepeso';
-  } else {
-    faixa = 'Obesidade';
-  }
-
-  print('\nSeu IMC é: ${imc.toStringAsFixed(2)}');
-  print('Classificação: $faixa');
+  return List.generate(tamanho, (_) => chars[random.nextInt(chars.length)]).join();
 }
